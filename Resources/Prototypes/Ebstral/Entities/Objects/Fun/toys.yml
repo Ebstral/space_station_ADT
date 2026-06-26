@@ -1,0 +1,49 @@
+- type: entity
+  parent: BasePlushie
+  id: ToyMaxwell
+  name: Максвелл
+  description: "Ебать 2024"
+  components:
+    - type: Sprite
+      sprite: Ebstral/Objects/Fun/Maxwell.rsi
+      state: maxwell
+
+    - type: AmbientSound
+      sound:
+        path: /Audio/Ebstral/Fun/maxwell-the-cat-theme.ogg
+      range: 8
+      volume: -1
+
+- type: entity
+  parent: BasePlushie
+  id: NekoArc
+  name: Неко Арк
+  description: Плюшевый пиздец
+  components:
+    - type: Sprite
+      sprite: Ebstral/Objects/Fun/neko.rsi
+      state: nekoarc
+
+    - type: EmitSoundOnActivate
+      sound:
+        collection: Ark
+        params:
+          volume: -10
+          maxDistance: 5
+
+    - type: MeleeWeapon
+      soundHit:
+        collection: Ark
+
+    - type: UseDelay
+      delay: 2.5
+
+- type: entity
+  parent: BasePlushie
+  id: Vasilisa
+  name: Василиса
+  description: Легенда
+  components:
+    - type: Sprite
+      sprite: Ebstral/Objects/Fun/Vasilisa.rsi
+      state: VasilisaLow

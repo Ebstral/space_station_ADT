@@ -51,7 +51,7 @@
       announcement: alert-level-delta-announcement
       selectable: false
       sound:
-        path: /Audio/ADT/Announcements/Alert/delta.ogg # ADT Tweaked
+        path: /Audio/Ebstral/Announcements/delta.ogg 
         params:
           volume: -1 # ADT-Tweak
       disableSelection: true
@@ -85,7 +85,7 @@
       announcement: alert-level-delta-announcement
       selectable: false
       sound:
-        path: /Audio/Misc/delta_alt.ogg
+        path: /Audio/ADT/Announcements/Alert/delta.ogg
         params:
           volume: -1 # ADT-Tweak
       disableSelection: true
@@ -116,3 +116,15 @@
     #   shuttleTime: 600
     #   disableSelection: true
       #ADT end
+    sierra:
+      announcement: alert-level-sierra-announcement
+      selectable: false
+      sound:
+        path: /Audio/Ebstral/Announcements/sierra.ogg
+        params:
+          volume: -1
+      disableSelection: true
+      color: PaleTurquoise
+      emergencyLightColor: PaleTurquoise
+      forceEnableEmergencyLights: true
+      shuttleTime: 1200
