@@ -23,19 +23,20 @@
     walkModifier: 0.9
     sprintModifier: 0.9
   - type: HeldSpeedModifier
-  # ADT-Tweak-Start
-  - type: HidesSlots
-    hidesSlots: [ INNERCLOTHING, GLOVES, LEGS, FEET, SOCKS, UNDERWEART, UNDERWEARB, POCKET ]
-  #ADT-Tweak-End
 
 - type: entity
   abstract: true
   parent: ClothingOuterBase
   id: ClothingOuterStorageBase
   components:
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,2
   - type: Storage
     grid:
     - 0,0,2,1
+    maxItemSize: Small
   - type: ContainerContainer
     containers:
       storagebase: !type:Container
@@ -156,9 +157,10 @@
   #ADT-Tweak-Start
   - type: CoveredSlot
     slots: [innerclothing, gloves, feet, underwearb, underweart, socks]
-  - type: HidesSlots
-    hidesSlots: [ INNERCLOTHING, GLOVES, LEGS, FEET, SOCKS, UNDERWEART, UNDERWEARB, POCKET ]
   #ADT-Tweak-End
+  - type: HideLayerClothing
+    slots:
+    - Tail
 
 - type: entity
   abstract: true
@@ -194,9 +196,10 @@
   #ADT-Tweak-Start
   - type: CoveredSlot
     slots: [innerclothing, gloves, feet, underwearb, underweart, socks]
-  - type: HidesSlots
-    hidesSlots: [ INNERCLOTHING, GLOVES, LEGS, FEET, SOCKS, UNDERWEART, UNDERWEARB, POCKET ]
   #ADT-Tweak-End
+  - type: HideLayerClothing
+    slots:
+    - Tail
 
 - type: entity
   parent: ClothingOuterBase
@@ -219,4 +222,6 @@
   id: ClothingOuterBaseMedium
   components:
   - type: Item
-    size: Huge
+    size: Large
+    shape:
+    - 0,0,2,3

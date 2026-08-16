@@ -53,10 +53,12 @@
       amount: 1
     - id: MaterialBones1 #ADT tweak
       maxAmount: 3 #ADT tweak
+    - id: ADTMaterialSinew1 #ADT tweak
+      maxAmount: 2 #ADT tweak
   - type: MovementSpeedModifier
     baseWalkSpeed: 3 # ADT tweak 5->3
     baseSprintSpeed: 4 #ADT tweak 7-> 4
-  - type: ProjectileBatteryAmmoProvider
+  - type: BatteryAmmoProvider
     proto: WatcherBolt
     fireCost: 50
   - type: BatterySelfRecharger
@@ -65,7 +67,7 @@
     maxCharge: 1000
     startingCharge: 1000
   - type: Gun
-    fireRate: 0.5
+    fireRate: 0.3 # ADT-Tweak 0.5 -> 0.3
     useKey: false
     selectedMode: SemiAuto
     availableModes:
@@ -79,7 +81,7 @@
     interactSuccessSound:
       path: /Audio/Animals/lizard_happy.ogg
   - type: Fauna # ADT-Tweak start
-  - type: AshStormImmune 
+  - type: AshStormImmune
   # - type: GrabProtection # ADT-Tweak-Comment
   - type: HTN
     rootTask:
@@ -89,8 +91,11 @@
         2
       AggroVisionRadius: !type:Single
         10
+  - type: ADTMobLoot
+    loots:
+      ADTKineticTrophyMagmaWing: 0.1
   # ADT-Tweak end
-  
+
 - type: entity
   id: MobWatcherLavaland
   parent: MobWatcherBase
@@ -143,6 +148,8 @@
       maxAmount: 3 #ADT tweak
     - id: DiamondOre1 #ADT tweak
       maxAmount: 1 #ADT tweak
+    - id: ADTMaterialSinew1 #ADT tweak
+      maxAmount: 2 #ADT tweak
 
 - type: entity
   id: MobWatcherMagmawing
@@ -166,7 +173,7 @@
     radius: 1
     energy: 3
     color: orangered
-  - type: ProjectileBatteryAmmoProvider
+  - type: BatteryAmmoProvider
     proto: WatcherBoltMagmawing
     fireCost: 50
   - type: Butcherable
@@ -176,6 +183,8 @@
     - id: PlasmaOre1 #ADT tweak
       maxAmount: 2
     - id: DiamondOre1 #ADT tweak
+      maxAmount: 2 #ADT tweak
+    - id: ADTMaterialSinew1 #ADT tweak
       maxAmount: 2 #ADT tweak
 
 - type: entity
@@ -197,4 +206,4 @@
     energy: 3
   - type: RgbLightController
     layers: [ 1 ]
-    
+
