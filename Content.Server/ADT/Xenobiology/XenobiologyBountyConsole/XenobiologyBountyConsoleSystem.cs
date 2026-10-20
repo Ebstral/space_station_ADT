@@ -21,15 +21,15 @@ namespace Content.Server.ADT.Xenobiology.XenobiologyBountyConsole;
 /// </summary>
 public sealed class XenobiologyBountyConsoleSystem : EntitySystem
 {
-    [Dependency] private readonly EntityWhitelistSystem _whitelist = default!;
-    [Dependency] private readonly StationSystem _station = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly AccessReaderSystem _access = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly ResearchSystem _research = default!;
-    [Dependency] private readonly StationXenobiologyBountyDatabaseSystem _xenoDatabase = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
+    [Dependency] private StationSystem _station = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private UserInterfaceSystem _uiSystem = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private AccessReaderSystem _access = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private ResearchSystem _research = default!;
+    [Dependency] private StationXenobiologyBountyDatabaseSystem _xenoDatabase = default!;
 
     private EntityQuery<StackComponent> _stackQuery;
 
@@ -62,12 +62,7 @@ public sealed class XenobiologyBountyConsoleSystem : EntitySystem
 
         if (!IsBountyComplete(args.Actor, bounty, out var bountyEntities))
         {
-            if (_timing.CurTime >= console.Comp.NextDenySoundTime)
-            {
-                console.Comp.NextDenySoundTime = _timing.CurTime + console.Comp.DenySoundDelay;
-                _audio.PlayPvs(console.Comp.DenySound, console);
-            }
-
+            PlayDenySound(console);
             return;
         }
 
@@ -100,12 +95,7 @@ public sealed class XenobiologyBountyConsoleSystem : EntitySystem
         if (TryComp<AccessReaderComponent>(console, out var accessReaderComponent) &&
             !_access.IsAllowed(mob, console, accessReaderComponent))
         {
-            if (_timing.CurTime >= console.Comp.NextDenySoundTime)
-            {
-                console.Comp.NextDenySoundTime = _timing.CurTime + console.Comp.DenySoundDelay;
-                _audio.PlayPvs(console.Comp.DenySound, console);
-            }
-
+            PlayDenySound(console);
             return;
         }
 
@@ -195,6 +185,15 @@ public sealed class XenobiologyBountyConsoleSystem : EntitySystem
     #endregion
 
     #region Helpers
+
+    private void PlayDenySound(Entity<XenobiologyBountyConsoleComponent> console)
+    {
+        if (_timing.CurTime < console.Comp.NextDenySoundTime)
+            return;
+
+        console.Comp.NextDenySoundTime = _timing.CurTime + console.Comp.DenySoundDelay;
+        _audio.PlayPvs(console.Comp.DenySound, console);
+    }
 
     public void UpdateBountyConsoles()
     {

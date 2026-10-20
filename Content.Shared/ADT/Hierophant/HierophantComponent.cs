@@ -1,3 +1,4 @@
+using Content.Shared.ADT.BossMusic;
 using Content.Shared.Damage;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
@@ -16,11 +17,20 @@ public enum HierophantVisuals : byte
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentPause]
 public sealed partial class HierophantComponent : Component
 {
-    [DataField]
+    [ViewVariables]
     public int BurstRange = 3;
 
-    [DataField]
+    [ViewVariables]
     public int BeamRange = 5;
+
+    [DataField]
+    public int BaseBurstRange = 3;
+
+    [DataField]
+    public int BaseBeamRange = 5;
+
+    [DataField]
+    public float BlastDamage = 10f;
 
     [DataField]
     public float ChaserSpeed = 0.3f;
@@ -39,9 +49,6 @@ public sealed partial class HierophantComponent : Component
 
     [DataField]
     public TimeSpan ArenaCooldownTime = TimeSpan.FromSeconds(20);
-
-    [DataField, AutoPausedField]
-    public TimeSpan NextRangedAt;
 
     [DataField, AutoPausedField]
     public TimeSpan NextChaserAt;
@@ -68,7 +75,10 @@ public sealed partial class HierophantComponent : Component
     public bool Enraged;
 
     [DataField]
-    public EntityUid? LastTarget;
+    public ProtoId<ADTBossMusicPrototype>? CalmMusic = "ADTBossMusicHierophant";
+
+    [DataField]
+    public ProtoId<ADTBossMusicPrototype>? RageMusic = "ADTBossMusicHierophantEnraged";
 
     [DataField]
     public int ArenaRadius = 11;
@@ -87,15 +97,6 @@ public sealed partial class HierophantComponent : Component
             { "Heat", 1 },
             { "Blunt", 1 },
         },
-    };
-
-    [DataField]
-    public List<EntProtoId> Actions = new()
-    {
-        "ActionADTHierophantBlink",
-        "ActionADTHierophantChaserSwarm",
-        "ActionADTHierophantCrossBlasts",
-        "ActionADTHierophantBlinkSpam",
     };
 
     [DataField]

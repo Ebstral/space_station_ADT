@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -51,7 +51,18 @@ namespace Content.Server.Database
 		public DbSet<BookPrinterEntry> BookPrinterEntry { get; set; } = null!; // ADT-BookPrinter
         public DbSet<DiscordUser> DiscordUser { get; set; } = null!; // ADT-Discord
         public DbSet<ThunderdomeStats> ThunderdomeStats { get; set; } = null!; // ADT-Thunderdome
+        // ADT-AntagRollBonus-Start
+        public DbSet<AntagRollBonus> AntagRollBonus { get; set; } = null!;
+        public DbSet<AntagRollBonusWipe> AntagRollBonusWipe { get; set; } = null!;
+        // ADT-AntagRollBonus-End
+        // ADT-Tweak-Start
+        public DbSet<AdtSponsorTier> AdtSponsorTier { get; set; } = null!;
+        public DbSet<AdtSponsorGrant> AdtSponsorGrant { get; set; } = null!;
+        public DbSet<AdtSponsorPreference> AdtSponsorPreference { get; set; } = null!;
+        // ADT-Tweak-End
         public DbSet<IPIntelCache> IPIntelCache { get; set; } = null!;
+        public DbSet<CustomVoteLog> CustomVoteLog { get; set; } = null!;
+        public DbSet<CustomVoteLogOption> CustomVoteLogOption { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,6 +97,31 @@ namespace Content.Server.Database
                 .HasIndex(p => p.Score)
                 .IsDescending();
             // ADT-Thunderdome-End
+
+            // ADT-AntagRollBonus-Start
+            modelBuilder.Entity<AntagRollBonus>()
+                .HasIndex(p => new { p.UserId, p.Antag })
+                .IsUnique();
+            // ADT-AntagRollBonus-End
+
+            // ADT-Tweak-Start
+            modelBuilder.Entity<AdtSponsorTier>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<AdtSponsorGrant>()
+                .HasIndex(p => new { p.UserId, p.Revoked });
+
+            modelBuilder.Entity<AdtSponsorGrant>()
+                .HasOne(p => p.Tier)
+                .WithMany(p => p.Grants)
+                .HasForeignKey(p => p.TierId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AdtSponsorPreference>()
+                .HasIndex(p => p.UserId)
+                .IsUnique();
+            // ADT-Tweak-End
 
             modelBuilder.Entity<Profile>()
                 .HasIndex(p => new {p.Slot, PrefsId = p.PreferenceId})
@@ -341,6 +377,7 @@ namespace Content.Server.Database
                 .HasDefaultValue(HwidType.Legacy);
 
             ModelBan.OnModelCreating(modelBuilder);
+            ModelCustomVoteLog.OnModelCreating(modelBuilder);
         }
 
         public virtual IQueryable<AdminLog> SearchLogs(IQueryable<AdminLog> query, string searchText)
@@ -375,12 +412,14 @@ namespace Content.Server.Database
         //ADT-tweak-start
         public string OOCNotes { get; set; } = null!;
         public string HeadshotUrl { get; set; } = null!;
+        public string ExploitableInfo { get; set; } = null!;
         //ADT-tweak-end
         public int Age { get; set; }
         public string Sex { get; set; } = null!;
+        public string? Voice { get; set; } = null!; // If null, the voice gets defaulted to the sex associated value
         public string Gender { get; set; } = null!;
         public string Species { get; set; } = null!;
-        public string Voice { get; set; } = null!; // Corvax-TTS
+        [Column("tts_voice")] public string TTSVoice { get; set; } = null!; // ADT-Tweak
         public string BarkProto { get; set; } = null!; // ADT Barks
         public float BarkPitch { get; set; } = 1f; // ADT Barks
         public float LowBarkVar { get; set; } = 0.1f; // ADT Barks
@@ -393,6 +432,7 @@ namespace Content.Server.Database
         public string FacialHairColor { get; set; } = null!;
         public string EyeColor { get; set; } = null!;
         public string SkinColor { get; set; } = null!;
+        public string? BodyType { get; set; } // ADT-Tweak
         public int SpawnPriority { get; set; } = 0;
         public List<Job> Jobs { get; } = new();
         public List<Antag> Antags { get; } = new();
@@ -721,6 +761,104 @@ namespace Content.Server.Database
         public DateTime LastPlayed { get; set; }
     }
     // ADT-Thunderdome-End
+
+    // ADT-AntagRollBonus-Start
+    public class AntagRollBonus
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public string Antag { get; set; } = null!;
+
+        public int MissedRounds { get; set; }
+    }
+
+    public class AntagRollBonusWipe
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public DateTime LastWipe { get; set; }
+    }
+    // ADT-AntagRollBonus-End
+
+    // ADT-Tweak-Start
+    public class AdtSponsorTier
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Машинное имя, уникальное
+        /// </summary>
+        public string Name { get; set; } = null!;
+
+        /// <summary>
+        /// Название для игрока
+        /// </summary>
+        public string DisplayName { get; set; } = null!;
+
+        /// <summary>
+        /// Описание для админов
+        /// </summary>
+        public string Description { get; set; } = null!;
+
+        public int Priority { get; set; }
+
+        public bool Enabled { get; set; } = true;
+
+        public string Benefits { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; }
+
+        public List<AdtSponsorGrant> Grants { get; } = new();
+    }
+
+    public class AdtSponsorGrant
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public int? TierId { get; set; }
+
+        public AdtSponsorTier? Tier { get; set; }
+
+        public int Priority { get; set; }
+
+        public string? Overrides { get; set; }
+
+        public string Comment { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; }
+
+        public Guid? CreatedBy { get; set; }
+
+        public DateTime? ExpiresAt { get; set; }
+
+        public bool Revoked { get; set; }
+
+        public DateTime? RevokedAt { get; set; }
+
+        public Guid? RevokedBy { get; set; }
+    }
+
+    public class AdtSponsorPreference
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public string? OocColor { get; set; }
+
+        public string? GhostColor { get; set; }
+    }
+    // ADT-Tweak-End
+
     public class Round
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -731,6 +869,8 @@ namespace Content.Server.Database
         public List<Player> Players { get; set; } = default!;
 
         public List<AdminLog> AdminLogs { get; set; } = default!;
+
+        public List<CustomVoteLog> CustomVoteLogs { get; set; } = default!;
 
         [ForeignKey("Server")] public int ServerId { get; set; }
         public Server Server { get; set; } = default!;
