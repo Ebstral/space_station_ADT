@@ -1,5 +1,5 @@
 using System.Numerics;
-using Content.Server.AlertLevel;
+using Content.Shared.AlertLevel;
 using Content.Server.Audio;
 using Content.Server.Chat.Systems;
 using Content.Server.Station.Systems;
@@ -7,7 +7,6 @@ using Content.Shared.Ebstral.ERT.SendShuttlePrototype;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
-using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.EntitySerialization.Systems;
@@ -18,7 +17,6 @@ namespace Content.Server.Ebstral.ERT.SendShuttleSystem;
 
 public sealed class SendShuttle : EntitySystem
 {
-    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
     [Dependency] private readonly MetaDataSystem _metaData = default!;
@@ -93,14 +91,20 @@ public sealed class SendShuttle : EntitySystem
 
     private void SetAlertLevel(SendShuttlePrototype proto)
     {
-        var stationUids = _station.GetStations();
+       if (proto.AlertLevelCode == null)
+        return;
 
-        foreach (var stationUid in stationUids)
-        {
-            _alertLevel.SetLevel(
-                stationUid,
-                proto.AlertLevelCode,
-                false, true, true, true);
+    var level = proto.AlertLevelCode.Value;
+
+    foreach (var stationUid in _station.GetStations())
+    {
+        _alertLevel.SetLevel(
+            stationUid,
+            level,
+            playSound: false,
+            announce: true,
+            force: true,
+            locked: true);
         }
     }
 }

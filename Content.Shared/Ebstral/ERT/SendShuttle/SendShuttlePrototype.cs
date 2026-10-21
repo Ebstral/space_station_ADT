@@ -1,4 +1,5 @@
 using Robust.Shared.Prototypes;
+using Content.Shared.AlertLevel;
 
 namespace Content.Shared.Ebstral.ERT.SendShuttlePrototype;
 
@@ -7,7 +8,7 @@ public sealed partial class SendShuttlePrototype : IPrototype  // partial — т
 {
     [ViewVariables]
     [IdDataField]
-    public string ID { get; } = default!;
+    public string ID { get; private set; } = default!;
 
     [DataField]
     public bool DefaultIsAnnounce = true;
@@ -46,7 +47,7 @@ public sealed partial class SendShuttlePrototype : IPrototype  // partial — т
     public bool IsSetAlertLevel = false;
 
     [DataField]
-    public string AlertLevelCode = string.Empty;
+    public ProtoId<AlertLevelPrototype>? AlertLevelCode;
 
     [DataField]
     public string HintText = string.Empty;
