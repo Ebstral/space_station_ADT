@@ -70,7 +70,7 @@
   id: DeltaNuke
   announcement: alert-level-delta-nuke-announcement
   sound:
-    path: /Audio/ADT/Announcements/Alert/delta.ogg # ADT-Tweak
+    path: /Audio/Ebstral/Announcements/delta.ogg
     params:
       volume: -1 # ADT-Tweak
   color: DarkRed
