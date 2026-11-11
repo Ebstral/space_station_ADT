@@ -26,7 +26,7 @@
     - sprite: Mobs/Species/Human/displacement.rsi
   - type: ConditionalSpawner
     prototypes:
-    - MobIPCEvent
+    - MobIPCEventCombat
 
 - type: entity
   parent: DoorElectronics
@@ -194,6 +194,7 @@
   - type: BatterySlotRequiresLock
     itemSlot: cell_slot
   - type: PickupHumans
+    handsRequired: 1
   - type: MobIpc
     disablePointLightOnDeath: true
   - type: InteractionPopup
